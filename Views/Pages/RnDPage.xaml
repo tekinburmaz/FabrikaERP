@@ -1,0 +1,104 @@
+<UserControl x:Class="FabrikaERP.Views.Pages.RnDPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:FabrikaERP.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ═══ PROJE LİSTESİ ═══ -->
+        <Border Grid.Column="0" Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Margin="0,0,20,0">
+            <DockPanel>
+                <Border DockPanel.Dock="Top" Padding="15,12" BorderBrush="#30363D" BorderThickness="0,0,0,1">
+                    <DockPanel>
+                        <TextBlock Text="Ar-Ge Projeleri" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <Button Content="Yenile" HorizontalAlignment="Right" Padding="8,2" Command="{Binding RefreshCommand}"/>
+                    </DockPanel>
+                </Border>
+
+                <ListBox ItemsSource="{Binding Projects}" 
+                         SelectedItem="{Binding SelectedProject}"
+                         Background="Transparent" BorderThickness="0" Margin="5">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="12" CornerRadius="8" Margin="0,2">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Name}" Foreground="#58A6FF" FontWeight="SemiBold" FontSize="14"/>
+                                    <TextBlock Text="{Binding Code}" Foreground="#8B949E" FontSize="11" Margin="0,2,0,4"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border Background="#238636" CornerRadius="10" Padding="8,1" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Status}" Foreground="White" FontSize="10"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding Manager}" Foreground="#8B949E" FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- ═══ PROJE DETAYLARI / PROTOTİPLER ═══ -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Proje Detay Kartı -->
+            <Border Grid.Row="0" Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Padding="20" Margin="0,0,0,20">
+                <StackPanel Visibility="{Binding SelectedProject, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding SelectedProject.Name}" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedProject.Code}" Foreground="#8B949E" Margin="0,2,0,15"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Yönetici:" Foreground="#8B949E" FontSize="11"/>
+                            <TextBlock Text="{Binding SelectedProject.Manager}" Foreground="White" Margin="0,2,0,10"/>
+                            <TextBlock Text="Başlangıç:" Foreground="#8B949E" FontSize="11"/>
+                            <TextBlock Text="{Binding SelectedProject.StartDate, StringFormat=d}" Foreground="White"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Bütçe:" Foreground="#8B949E" FontSize="11"/>
+                            <TextBlock Text="{Binding SelectedProject.Budget, StringFormat=N0 TRY}" Foreground="#3FB950" FontWeight="Bold" Margin="0,2,0,10"/>
+                            <TextBlock Text="Durum:" Foreground="#8B949E" FontSize="11"/>
+                            <TextBlock Text="{Binding SelectedProject.Status}" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Prototip Listesi -->
+            <Border Grid.Row="1" Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Padding="15,12" BorderBrush="#30363D" BorderThickness="0,0,0,1">
+                        <TextBlock Text="Prototipler ve Sürümler" Foreground="White" FontWeight="Bold"/>
+                    </Border>
+                    
+                    <DataGrid ItemsSource="{Binding Prototypes}" AutoGenerateColumns="False" 
+                              Background="Transparent" BorderThickness="0" 
+                              Foreground="White" CanUserAddRows="False"
+                              RowBackground="#161B22" AlternatingRowBackground="#0D1117">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Kod" Binding="{Binding Code}" Width="100"/>
+                            <DataGridTextColumn Header="Ad" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Sürüm" Binding="{Binding Version}" Width="80"/>
+                            <DataGridTextColumn Header="Durum" Binding="{Binding Status}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

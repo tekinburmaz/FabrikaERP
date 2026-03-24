@@ -1,0 +1,192 @@
+<UserControl x:Class="FabrikaERP.Views.Pages.MesPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:models="clr-namespace:FabrikaERP.Models"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1000"
+             Background="#0D1117">
+
+    <UserControl.Resources>
+        <Style x:Key="StatCard" TargetType="Border">
+            <Setter Property="Background" Value="#161B22"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#21262D"/>
+        </Style>
+        <Style x:Key="ActionBtn" TargetType="Button">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.85"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,24,24,32">
+
+            <!-- KPI Kartları -->
+            <UniformGrid Columns="4" Margin="0,0,0,24">
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Üretimde" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding InProgressCount}" FontSize="32" FontWeight="Bold" Foreground="#58A6FF" Margin="0,6,0,0"/>
+                        <TextBlock Text="aktif iş emri" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Tamamlanan" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding CompletedCount}" FontSize="32" FontWeight="Bold" Foreground="#3FB950" Margin="0,6,0,0"/>
+                        <TextBlock Text="iş emri" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Geciken" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding DelayedCount}" FontSize="32" FontWeight="Bold" Foreground="#F85149" Margin="0,6,0,0"/>
+                        <TextBlock Text="iş emri" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="Toplam Üretilen" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding TotalProduced, StringFormat='{}{0:N0}'}" FontSize="28" FontWeight="Bold" Foreground="#C9D1D9" Margin="0,6,0,0"/>
+                        <TextBlock Text="adet" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- Araç Çubuğu -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0" ItemsSource="{Binding StatusOptions}"
+                          SelectedItem="{Binding StatusFilter}"
+                          Height="36" Background="#161B22" Foreground="#C9D1D9"
+                          BorderBrush="#30363D" FontSize="13"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="Başlat" Command="{Binding StartOrderCommand}"
+                            Background="#1F6FEB" Style="{StaticResource ActionBtn}" Margin="0,0,8,0"/>
+                    <Button Content="Duraklat" Command="{Binding PauseOrderCommand}"
+                            Background="#D29922" Style="{StaticResource ActionBtn}" Margin="0,0,8,0"/>
+                    <Button Content="Yenile" Command="{Binding RefreshCommand}"
+                            Background="#21262D" Style="{StaticResource ActionBtn}"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- İş Emirleri Tablosu -->
+            <Border Background="#161B22" CornerRadius="12" BorderThickness="1" BorderBrush="#21262D">
+                <StackPanel>
+                    <Border Background="#21262D" CornerRadius="12,12,0,0" Padding="20,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="İŞ EMRİ"   Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="ÜRÜN"      Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="2" Text="MAKİNE"    Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="3" Text="PLN."      Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="4" Text="ÜRETİLEN"  Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="5" Text="HATA"      Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="6" Text="TESLİM"    Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="7" Text="DURUM"     Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                        </Grid>
+                    </Border>
+
+                    <ItemsControl ItemsSource="{Binding WorkOrders}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#21262D" BorderThickness="0,0,0,1" Padding="20,11"
+                                        Cursor="Hand">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="130"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="90"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding OrderNumber}"
+                                                   Foreground="#58A6FF" FontSize="12" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding ProductName}"
+                                                   Foreground="#C9D1D9" FontSize="13"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Machine.Code}"
+                                                   Foreground="#8B949E" FontSize="12"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding PlannedQty}"
+                                                   Foreground="#C9D1D9" FontSize="13"/>
+                                        <StackPanel Grid.Column="4">
+                                            <TextBlock Text="{Binding ProducedQty}" Foreground="#C9D1D9" FontSize="13"/>
+                                            <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" Height="3"
+                                                         Background="#21262D" Foreground="#3FB950" BorderThickness="0" Margin="0,2,8,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="5" Text="{Binding RejectedQty}"
+                                                   Foreground="#F85149" FontSize="13"/>
+                                        <TextBlock Grid.Column="6" Text="{Binding PlannedEnd, StringFormat='{}{0:dd MMM yyyy}'}"
+                                                   Foreground="#8B949E" FontSize="13"/>
+                                        <TextBlock Grid.Column="7" Text="{Binding Status}"
+                                                   FontSize="12" FontWeight="SemiBold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#C9D1D9"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:WorkOrderStatus.InProgress}">
+                                                            <Setter Property="Foreground" Value="#3FB950"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:WorkOrderStatus.Delayed}">
+                                                            <Setter Property="Foreground" Value="#F85149"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:WorkOrderStatus.OnHold}">
+                                                            <Setter Property="Foreground" Value="#D29922"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="{x:Static models:WorkOrderStatus.Completed}">
+                                                            <Setter Property="Foreground" Value="#58A6FF"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

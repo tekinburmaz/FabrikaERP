@@ -1,0 +1,85 @@
+<UserControl x:Class="FabrikaERP.Views.Pages.SafetyEnvPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:FabrikaERP.Views.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="1000">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- KPI ŞERİDİ -->
+        <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,20">
+            <Border Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Padding="15" Margin="0,0,10,0">
+                <StackPanel>
+                    <TextBlock Text="İSG Olayları (Toplam)" Foreground="#8B949E" FontSize="12"/>
+                    <TextBlock Text="{Binding IncidentCount}" Foreground="#F85149" FontSize="24" FontWeight="Bold" Margin="0,5"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Padding="15" Margin="5,0,5,0">
+                <StackPanel>
+                    <TextBlock Text="Karbon Ayak İzi (Ton CO2)" Foreground="#8B949E" FontSize="12"/>
+                    <TextBlock Text="{Binding TotalCarbon, StringFormat=N1}" Foreground="#3FB950" FontSize="24" FontWeight="Bold" Margin="0,5"/>
+                </StackPanel>
+            </Border>
+            <Border Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Padding="15" Margin="10,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Geri Dönüşüm Oranı" Foreground="#8B949E" FontSize="12"/>
+                    <TextBlock Text="% 84.2" Foreground="#58A6FF" FontSize="24" FontWeight="Bold" Margin="0,5"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- İSG Olay Listesi -->
+            <Border Grid.Column="0" Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Margin="0,0,10,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Padding="15,12" BorderBrush="#30363D" BorderThickness="0,0,0,1">
+                        <TextBlock Text="Güvenlik Olayları Raporu" Foreground="White" FontWeight="Bold"/>
+                    </Border>
+                    <ListBox ItemsSource="{Binding Incidents}" Background="Transparent" BorderThickness="0">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10" BorderBrush="#30363D" BorderThickness="0,0,0,1">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Title}" Foreground="#C9D1D9" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding IncidentDate, StringFormat=d}" Foreground="#8B949E" FontSize="11"/>
+                                        <TextBlock Text="{Binding Severity}" Foreground="#F85149" FontSize="11" FontWeight="Bold"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- Çevresel Etki Analizi -->
+            <Border Grid.Column="1" Background="#161B22" CornerRadius="12" BorderBrush="#30363D" BorderThickness="1" Margin="10,0,0,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Padding="15,12" BorderBrush="#30363D" BorderThickness="0,0,0,1">
+                        <TextBlock Text="Çevresel Etki ve Emisyonlar" Foreground="White" FontWeight="Bold"/>
+                    </Border>
+                    <DataGrid ItemsSource="{Binding Impacts}" AutoGenerateColumns="False" 
+                              Background="Transparent" BorderThickness="0" Foreground="White"
+                              RowBackground="#161B22" AlternatingRowBackground="#0D1117">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Detay" Binding="{Binding Description}" Width="*"/>
+                            <DataGridTextColumn Header="Kategori" Binding="{Binding Type}" Width="*"/>
+                            <DataGridTextColumn Header="Miktar" Binding="{Binding Value, StringFormat=N2}" Width="100"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

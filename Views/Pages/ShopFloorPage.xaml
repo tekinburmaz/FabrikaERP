@@ -1,0 +1,224 @@
+<UserControl x:Class="FabrikaERP.Views.Pages.ShopFloorPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#0D1117">
+
+    <UserControl.Resources>
+        <Style x:Key="StatusBadge" TargetType="Border">
+            <Setter Property="CornerRadius"    Value="10"/>
+            <Setter Property="Padding"         Value="10,3"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="StatCard" TargetType="Border">
+            <Setter Property="Background"      Value="#161B22"/>
+            <Setter Property="CornerRadius"    Value="10"/>
+            <Setter Property="Padding"         Value="16,14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#21262D"/>
+        </Style>
+        <Style x:Key="MachineCard" TargetType="Border">
+            <Setter Property="Background"      Value="#161B22"/>
+            <Setter Property="CornerRadius"    Value="10"/>
+            <Setter Property="Padding"         Value="16,14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#21262D"/>
+            <Setter Property="Margin"          Value="0,0,12,12"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+        </Style>
+        <!-- FilterBox -->
+        <Style x:Key="FilterTextBox" TargetType="TextBox">
+            <Setter Property="Background"   Value="#161B22"/>
+            <Setter Property="Foreground"   Value="#C9D1D9"/>
+            <Setter Property="BorderBrush"  Value="#30363D"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height"       Value="36"/>
+            <Setter Property="Padding"      Value="10,0"/>
+            <Setter Property="FontSize"     Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="CaretBrush"   Value="#58A6FF"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,24,24,32">
+
+            <!-- ── Durum Özeti ── -->
+            <UniformGrid Columns="4" Margin="0,0,0,24">
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Çalışıyor" Foreground="#8B949E" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Ellipse Width="10" Height="10" Fill="#3FB950" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding RunningCount}" FontSize="28" FontWeight="Bold" Foreground="#3FB950"/>
+                            <TextBlock Text=" makine" FontSize="13" Foreground="#8B949E" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Boşta" Foreground="#8B949E" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Ellipse Width="10" Height="10" Fill="#8B949E" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding IdleCount}" FontSize="28" FontWeight="Bold" Foreground="#8B949E"/>
+                            <TextBlock Text=" makine" FontSize="13" Foreground="#8B949E" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Bakımda" Foreground="#8B949E" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Ellipse Width="10" Height="10" Fill="#D29922" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding MaintenanceCount}" FontSize="28" FontWeight="Bold" Foreground="#D29922"/>
+                            <TextBlock Text=" makine" FontSize="13" Foreground="#8B949E" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="Arıza" Foreground="#8B949E" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                            <Ellipse Width="10" Height="10" Fill="#F85149" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock Text="{Binding BreakdownCount}" FontSize="28" FontWeight="Bold" Foreground="#F85149"/>
+                            <TextBlock Text=" makine" FontSize="13" Foreground="#8B949E" VerticalAlignment="Bottom" Margin="0,0,0,3"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- ── Filtreler ── -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Style="{StaticResource FilterTextBox}"
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,12,0">
+                    <TextBox.Resources>
+                        <Style TargetType="{x:Type Border}"><Setter Property="CornerRadius" Value="8"/></Style>
+                    </TextBox.Resources>
+                </TextBox>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding StatusOptions}"
+                          SelectedItem="{Binding StatusFilter}"
+                          Height="36" Margin="0,0,12,0"
+                          Background="#161B22" Foreground="#C9D1D9"
+                          BorderBrush="#30363D" FontSize="13"/>
+                <Button Grid.Column="2" Content="Yenile"
+                        Command="{Binding RefreshCommand}"
+                        Height="36" Padding="16,0"
+                        Background="#21262D" Foreground="#C9D1D9"
+                        BorderBrush="#30363D" BorderThickness="1"
+                        FontSize="13" Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="8">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="#2D333B"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+            </Grid>
+
+            <!-- ── Makine Kartları Izgarası ── -->
+            <ItemsControl ItemsSource="{Binding Machines}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource MachineCard}" Width="240">
+                            <StackPanel>
+                                <!-- Kod + durum -->
+                                <Grid Margin="0,0,0,10">
+                                    <TextBlock Text="{Binding Code}" Foreground="#58A6FF"
+                                               FontSize="12" FontFamily="Consolas"
+                                               FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <!-- Durum indikatörü -->
+                                    <Ellipse Width="10" Height="10" HorizontalAlignment="Right"
+                                             VerticalAlignment="Center">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="#8B949E"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Running">
+                                                        <Setter Property="Fill" Value="#3FB950"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Breakdown">
+                                                        <Setter Property="Fill" Value="#F85149"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Maintenance">
+                                                        <Setter Property="Fill" Value="#D29922"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                </Grid>
+
+                                <TextBlock Text="{Binding Name}" Foreground="#C9D1D9"
+                                           FontSize="14" FontWeight="SemiBold" Margin="0,0,0,4"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding Department}" Foreground="#8B949E" FontSize="12" Margin="0,0,0,12"/>
+
+                                <!-- OEE çubuğu -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="OEE" Foreground="#8B949E" FontSize="11"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding OeeCurrent, StringFormat='{}{0:F1}%'}"
+                                               Foreground="#58A6FF" FontSize="11" FontWeight="SemiBold"/>
+                                </Grid>
+                                <ProgressBar Value="{Binding OeeCurrent}" Maximum="100" Height="4"
+                                             Background="#21262D" BorderThickness="0">
+                                    <ProgressBar.Style>
+                                        <Style TargetType="ProgressBar">
+                                            <Setter Property="Foreground" Value="#58A6FF"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="Breakdown">
+                                                    <Setter Property="Foreground" Value="#F85149"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Maintenance">
+                                                    <Setter Property="Foreground" Value="#D29922"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ProgressBar.Style>
+                                </ProgressBar>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

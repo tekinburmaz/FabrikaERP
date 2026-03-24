@@ -1,0 +1,241 @@
+<UserControl x:Class="FabrikaERP.Views.Pages.QualityPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#0D1117">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <Style x:Key="StatCard" TargetType="Border">
+            <Setter Property="Background" Value="#161B22"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="16,14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#21262D"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,24,24,32">
+
+            <!-- ── İstatistik Kartları ── -->
+            <UniformGrid Columns="4" Margin="0,0,0,24">
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Toplam Kontrol" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding TotalInspected}" FontSize="32" FontWeight="Bold" Foreground="#C9D1D9" Margin="0,6,0,0"/>
+                        <TextBlock Text="adet ürün" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Geçti" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding PassCount}" FontSize="32" FontWeight="Bold" Foreground="#3FB950" Margin="0,6,0,0"/>
+                        <TextBlock Text="adet" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}" Margin="0,0,12,0">
+                    <StackPanel>
+                        <TextBlock Text="Başarısız" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding FailCount}" FontSize="32" FontWeight="Bold" Foreground="#F85149" Margin="0,6,0,0"/>
+                        <TextBlock Text="adet" Foreground="#8B949E" FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <TextBlock Text="Geçiş Oranı" Foreground="#8B949E" FontSize="12"/>
+                        <TextBlock Text="{Binding PassRate, StringFormat='{}{0:F1}%'}" FontSize="32" FontWeight="Bold" Foreground="#58A6FF" Margin="0,6,0,0"/>
+                        <ProgressBar Value="{Binding PassRate}" Maximum="100" Height="4"
+                                     Background="#21262D" Foreground="#58A6FF" BorderThickness="0" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- ── Barkod Tarama Paneli ── -->
+            <Border Background="#161B22" CornerRadius="12" Padding="24,20"
+                    BorderThickness="1" BorderBrush="#21262D" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="Barkod Kalite Kontrolü" FontSize="14" FontWeight="SemiBold"
+                               Foreground="#C9D1D9" Margin="0,0,0,16"/>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Barkod giriş alanı -->
+                        <Border Grid.Column="0" Background="#0D1117" BorderBrush="#30363D"
+                                BorderThickness="1" CornerRadius="8" Margin="0,0,12,0">
+                            <Grid>
+                                <TextBox Text="{Binding BarcodeInput, UpdateSourceTrigger=PropertyChanged}"
+                                         Background="Transparent" Foreground="#C9D1D9"
+                                         BorderThickness="0" Height="44" Padding="14,0"
+                                         FontSize="15" VerticalContentAlignment="Center"
+                                         CaretBrush="#58A6FF"
+                                         x:Name="TxtBarcode"/>
+                                <TextBlock Text="Barkod giriniz veya okutunuz..."
+                                           Foreground="#484F58" FontSize="13"
+                                           VerticalAlignment="Center" Margin="14,0,0,0"
+                                           IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding BarcodeInput}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+
+                        <!-- Tara butonu -->
+                        <Button Grid.Column="1" Content="Tara / Kabul"
+                                Command="{Binding ScanCommand}"
+                                Height="44" Margin="0,0,8,0"
+                                Cursor="Hand" BorderThickness="0"
+                                FontSize="13" FontWeight="SemiBold" Foreground="White">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#1F6FEB" Offset="0"/>
+                                    <GradientStop Color="#00D4FF" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Opacity" Value="0.85"/>
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Temizle butonu -->
+                        <Button Grid.Column="2" Content="Temizle"
+                                Command="{Binding ClearCommand}"
+                                Height="44" Background="#21262D" Foreground="#C9D1D9"
+                                BorderBrush="#30363D" BorderThickness="1"
+                                FontSize="13" Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="8">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="#2D333B"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+
+                    <!-- Durum mesajı -->
+                    <Border Background="#0C1A0E" BorderBrush="#3FB950" BorderThickness="1"
+                            CornerRadius="8" Padding="14,10" Margin="0,12,0,0"
+                            Visibility="{Binding HasStatus, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding StatusMessage}" Foreground="#3FB950" FontSize="13"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- ── Kontrol Kayıtları Tablosu ── -->
+            <Border Background="#161B22" CornerRadius="12"
+                    BorderThickness="1" BorderBrush="#21262D">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="20,18,20,0">
+                        <TextBlock Text="Son Kontroller" FontSize="14" FontWeight="SemiBold" Foreground="#C9D1D9"/>
+                        <Border Background="#21262D" CornerRadius="10" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Records.Count, StringFormat='{}{0} kayıt'}"
+                                       Foreground="#8B949E" FontSize="11"/>
+                        </Border>
+                        <Button Content="Yenile" Command="{Binding RefreshCommand}"
+                                Height="30" Padding="12,0"
+                                Background="Transparent" Foreground="#58A6FF"
+                                BorderThickness="0" FontSize="12" Cursor="Hand"
+                                Margin="8,0,0,0"/>
+                    </StackPanel>
+
+                    <!-- Sütun başlıkları -->
+                    <Border Background="#21262D" Padding="20,10" Margin="0,14,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="160"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="BARKOD"       Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="1" Text="ÜRÜN"         Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="2" Text="SONUÇ"        Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="3" Text="MÜFETTİŞ"     Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                            <TextBlock Grid.Column="4" Text="ZAMAN"        Foreground="#8B949E" FontSize="11" FontWeight="SemiBold"/>
+                        </Grid>
+                    </Border>
+
+                    <ItemsControl ItemsSource="{Binding Records}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#21262D" BorderThickness="0,0,0,1" Padding="20,11">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="160"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Barcode}"
+                                                   Foreground="#58A6FF" FontSize="12" FontFamily="Consolas"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding ProductName}"
+                                                   Foreground="#C9D1D9" FontSize="13"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Result}"
+                                                   FontSize="12" FontWeight="SemiBold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#C9D1D9"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Result}" Value="Pass">
+                                                            <Setter Property="Foreground" Value="#3FB950"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Result}" Value="Fail">
+                                                            <Setter Property="Foreground" Value="#F85149"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Result}" Value="Conditional">
+                                                            <Setter Property="Foreground" Value="#D29922"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Grid.Column="3" Text="{Binding InspectorId}"
+                                                   Foreground="#8B949E" FontSize="13"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding InspectedAt, StringFormat='{}{0:dd MMM HH:mm}'}"
+                                                   Foreground="#8B949E" FontSize="12"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
